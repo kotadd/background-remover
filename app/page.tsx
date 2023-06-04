@@ -1,15 +1,19 @@
 "use client";
-import saveAs from "file-saver";
 import { useState } from "react";
 import Dropzone, { FileRejection } from "react-dropzone";
+
 import { FaDownload, FaTrashAlt } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
+
+import { saveAs } from "file-saver";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>();
   const [error, setError] = useState("");
+
   const [outputImage, setOutputImage] = useState<string | null>(null);
   const [base64image, setBase64Image] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
 
   const acceptedFileTypes = {
@@ -41,6 +45,14 @@ export default function Home() {
     };
   };
 
+  const fileSize = (size: number) => {
+    if (size === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(size) / Math.log(k));
+    return parseFloat((size / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
   const handleDelete = () => {
     setFile(null);
     setOutputImage(null);
@@ -63,7 +75,6 @@ export default function Home() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
-
       return;
     }
 
@@ -83,6 +94,7 @@ export default function Home() {
           Background Remover
         </h1>
       </section>
+
       {/* Dropzone Section */}
       <section className="w-full max-w-lg mx-auto mb-12">
         {/* Dropzone */}
@@ -94,10 +106,10 @@ export default function Home() {
             onDrop={onDrop}
           >
             {({ getRootProps, getInputProps }) => (
-              <section className="p-4">
-                <div {...getRootProps()}>
+              <section>
+                <div className="py-10" {...getRootProps()}>
                   <input {...getInputProps()} />
-                  <p>ファイルをドラッグ&ドロップするか、</p>
+                  <p>ファイルをドラッグ＆ドロップするか、</p>
                   <p>クリックして選択してください</p>
                 </div>
               </section>
@@ -112,18 +124,21 @@ export default function Home() {
         )}
 
         {/* Submit button */}
-        <div className="flex items-center justify-center mt-4">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className={`text-white text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l rounded-lg px-4 py-2 text-center mb-2
-            ${loading && "cursor-progress"}
-            `}
-          >
-            Remove background
-          </button>
-        </div>
+        {file && (
+          <div className="flex items-center justify-center mt-2">
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`text-white text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l rounded-lg px-4 py-2 text-center mb-2 ${
+                loading && "cursor-progress"
+              }`}
+            >
+              Remove background
+            </button>
+          </div>
+        )}
       </section>
+
       {/* Images Section */}
       <section className="grid grid-cols-2 gap-4 mt-4">
         {file && (
@@ -140,7 +155,12 @@ export default function Home() {
               >
                 <FaTrashAlt className="w-4 h-4 hover:scale-125 duration-300" />
               </button>
+
+              <div className="absolute bottom-0 left-0 right-0 bg-gray-900 bg-opacity-50 text-white text-md p-2">
+                {file.name} ({fileSize(file.size)})
+              </div>
             </div>
+
             <div className="flex items-center justify-center relative">
               {loading && (
                 <ThreeDots
@@ -151,6 +171,7 @@ export default function Home() {
                   visible={true}
                 />
               )}
+
               {outputImage && (
                 <>
                   <img
@@ -158,6 +179,7 @@ export default function Home() {
                     alt="output"
                     className="object-cover w-full h-full"
                   />
+
                   <button
                     className="absolute top-0 right-0 p-3 text-black bg-yellow-500"
                     onClick={() => handleDownload()}
