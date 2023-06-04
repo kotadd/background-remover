@@ -80,7 +80,7 @@ export default function Home() {
       {/* Header Section */}
       <section className="text-center mb-10">
         <h1 className="font-semibold text-transparent text-5xl bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block bg-clip-text">
-          Remove background
+          Background Remover
         </h1>
       </section>
       {/* Dropzone Section */}
@@ -94,10 +94,11 @@ export default function Home() {
             onDrop={onDrop}
           >
             {({ getRootProps, getInputProps }) => (
-              <section>
+              <section className="p-4">
                 <div {...getRootProps()}>
                   <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
+                  <p>ファイルをドラッグ&ドロップするか、</p>
+                  <p>クリックして選択してください</p>
                 </div>
               </section>
             )}
@@ -111,7 +112,7 @@ export default function Home() {
         )}
 
         {/* Submit button */}
-        <div className="flex items-center justify-center mt-2">
+        <div className="flex items-center justify-center mt-4">
           <button
             onClick={handleSubmit}
             disabled={loading}
